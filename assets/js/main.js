@@ -28,6 +28,13 @@ const prevBtn = $('.btn-prev');
 const nextBtn = $('.btn-next');
 const randomBtn = $('.btn-random');
 const repeatBtn = $('.btn-repeat');
+// const time_start = $('.controls_time--left');
+// const time_count = $('.controls_time--right');
+
+const time_start = $('.controls_time--left');
+time_start.textContent = '00:00'
+const time_count = $('.controls_time--right');
+time_count.textContent = '00:00'
 
 
 
@@ -174,13 +181,38 @@ const app = {
         //Khi tiến độ bài hát thay đổi
         audio.ontimeupdate = function () {
             if (audio.duration) {
-                const progressPercent = Math.floor((audio.currentTime / audio.duration) * 100);
-                progress.value = progressPercent;
+                const progressPercent = Math.floor(audio.currentTime / audio.duration * 100)
+                progress.value = progressPercent
+
+                // Xử lý tính thời gian của bài hát
+                // Time Start
+                var time_start_loading = Math.floor(audio.currentTime); // thời gian hiện tại bài hát đang chạy
+                var time_start_seconds = time_start_loading % 60; // số giây
+                var time_start_minutes = Math.floor(time_start_loading / 60); // số phút
+                if (time_start_seconds < 10) {
+                    var time_start_seconds_tent = 0; // số chục giây
+                } else {
+                    time_start_seconds_tent = "";
+                }
+                time_start.textContent = '0' + time_start_minutes + ":" + time_start_seconds_tent + time_start_seconds;
+
+                // Time Count
+                // Time Count
+                var time_count_loading = Math.floor( audio.duration) ; // Tổng số thời gian bài hát
+                var time_count_seconds =  time_count_loading % 60; //số giây
+                var time_count_minutes =  Math.floor( time_count_loading / 60); //số phút
+                if(time_count_seconds < 10){
+                   var time_count_seconds_ten = 0; // số chục giây
+                }else{
+                    time_count_seconds_ten = "";
+                }
+
+                time_count.textContent =  '0' + time_count_minutes +  ":" + time_count_seconds_ten + time_count_seconds;
             }
-        };
+        }
 
         //xử lý khi tua song
-        progress.onchange = function (e) {
+        progress.oninput = function (e) {
             const seekTime = audio.duration / 100 * e.target.value;
             audio.currentTime = seekTime;
         }
